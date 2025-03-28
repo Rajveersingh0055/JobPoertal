@@ -11,6 +11,8 @@ app.get("/", (req, res) => {
   res.send("homepage");
 });
 
+app.use("/api/auth",authRouter)
+
 app.listen(config.app.PORT || 3000, () => {
   console.log(`Server is running ${config.app.PORT}`);
 });
