@@ -1,73 +1,305 @@
+import { complex } from "motion/react";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { data } from "react-router-dom";
 
 function Register() {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm();
-
-  console.log(errors);
-
-  const selectedRole = watch("role");
-
-  console.log(selectedRole);
-
-  const onSubmit = (data) => {
-    console.log(data);
-  };
+  const { register, handleSubmit, watch } = useForm();
 
   console.log(register("name"));
 
+  const selectedRole = watch("role");
+
+  
+
+
+  const onSubmit = (data) => {
+    console.log(data);
+    FormData.append(
+      "expeience",
+      JSON.stringify({
+        expeience: [
+          {
+            company: data.company,
+            jobRole: data.jobRole,
+            duration: data.duration,
+          },
+        ],
+      })
+    );
+    FormData.append(
+      "education",
+      JSON.stringify({
+        education: [
+          {
+            institution: data.institution,
+            year: data.year,
+            degree: data.degree,
+          },
+        ],
+      })
+    );
+  }
+
+
   return (
-    <div className="text-white">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <label>Name</label>
-        <input {...register("name")} type="text" />
+    <div className="min-h-screen text-white bg-black py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-2xl mx-auto bg-[#282828] rounded-xl shadow-lg overflow-hidden">
+        <div className="bg-red-500 text-[#282828] py-6 px-8">
+          <h1 className="text-2xl font-bold">
+            Create your <span className="font-extrabold">JobFinder</span>{" "}
+            profile
+          </h1>
+          <p className="mt-2 text-[#282828] text-opacity-90">
+            Search & apply to jobs from India's No.1 Job Site
+          </p>
+        </div>
 
-        <label>Email</label>
-        <input
-          {...register("email", { required: "Email Address is required" })}
-          type="email"
-        />
-        {errors.email && <p>{errors.email.message}</p>}
+        <form className="p-8 text-white space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-gray-700 text-sm font-medium mb-2">
+                Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                className="w-full text-white bg-black border-gray-300 focus:border focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
+                placeholder="What is your name?"
+                {...register("name")}
+              />
+            </div>
 
-        <label>Phone Number</label>
-        <input {...register("phoneNumber")} type="number" />
+            <div>
+              <label className="block text-gray-700 text-sm font-medium mb-2">
+                Email <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="email"
+                className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
+                placeholder="Your Email"
+                {...register("email")}
+              />
+            </div>
 
-        <label>Password</label>
-        <input {...register("phoneNumber")} type="password" />
+            <div>
+              <label className="block text-gray-700 text-sm font-medium mb-2">
+                Password <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="password"
+                className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
+                placeholder="Your Password"
+                {...register("password")}
+              />
+            </div>
 
-        <label>Are you a?</label>
-        <label>Jobseeker</label>
-        <input
-          type="radio"
-          name="role"
-          value="jobseeker"
-          {...register("role")}
-        />
-        <label>Recruiter</label>
-        <input
-          type="radio"
-          name="role"
-          value="recruiter"
-          {...register("role")}
-        />
-
-        {selectedRole === "jobseeker" && (
-          <div>
-            <label>Education</label>
+            <div>
+              <label className="block text-gray-700 text-sm font-medium mb-2">
+                Phone Number <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
+                placeholder="Your Phone Number"
+                {...register("phone")}
+              />
+            </div>
           </div>
-        )}
-        <button type="submit">Register</button>
-      </form>
+
+          <div className="py-2">
+            <label className="block text-gray-700 text-sm font-medium mb-3">
+              Are you a? <span className="text-red-500">*</span>
+            </label>
+            <div className="flex space-x-6">
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  {...register("role")}
+                  value="jobseeker"
+                  className="mr-2 text-red-500 focus:ring-red-500 h-4 w-4"
+                />
+                <span className="text-gray-700">Job Seeker</span>
+              </label>
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  value="recruiter"
+                  className="mr-2 text-red-500 focus:ring-red-500 h-4 w-4"
+                />
+                <span className="text-gray-700">Recruiter</span>
+              </label>
+            </div>
+          </div>
+
+          {selectedRole === "jobseeker" && (
+            <div className="border-t border-gray-200 pt-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                Job Seeker Details
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Degree
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
+                    placeholder="Your Degree"
+                    {...register("degree")}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Institution
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
+                    placeholder="Your Institution"
+                    {...register("institution")}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Year
+                  </label>
+                  <input
+                    type="number"
+                    className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
+                    placeholder="Year of Graduation"
+                    {...register("year")}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Company
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
+                    placeholder="Your Company"
+                    {...register("company")}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Duration (Years)
+                  </label>
+                  <input
+                    type="number"
+                    className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
+                    placeholder="Duration"
+                    {...register("duration")}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Job Role
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
+                    placeholder="Job Role"
+                    {...register("jobRole")}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Skills
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
+                    placeholder="E.g., JavaScript, React"
+                    {...register("skills")}
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Resume <span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex items-center justify-center w-full">
+                    <label className="flex flex-col rounded-lg border-2 border-dashed w-full h-32 p-10 group text-center border-gray-300 cursor-pointer hover:bg-gray-50">
+                      {/* <div className="h-full w-full text-center flex flex-col items-center justify-center">
+                        <p className="text-gray-500">
+                          Drag and drop your resume or click to browse
+                        </p>
+                      </div> */}
+                      <input
+                        type="file"
+                        j
+                        className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
+                      />
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {selectedRole === "recruiter" && (
+            <div className="border-t border-gray-200 pt-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                Recruiter Details
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Company Name
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
+                    placeholder="Company Name"
+
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Company Website
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
+                    placeholder="Company Website"
+
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="border-t border-gray-200 pt-6">
+            <p className="text-xs text-gray-500">
+              By clicking Register, you agree to the{" "}
+              <span className="text-red-500 font-medium hover:underline cursor-pointer">
+                Terms and Conditions
+              </span>{" "}
+              &{" "}
+              <span className="text-red-500 font-medium hover:underline cursor-pointer">
+                Privacy Policy
+              </span>{" "}
+              of JobFinder.com
+            </p>
+            <button
+              type="submit"
+              className="mt-4 w-full bg-red-500 hover:bg-red-600 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200 shadow-sm"
+            >
+              Register
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
 
 export default Register;
-
-//step-1 create a function which accepts the data in the params
-//step-2 add on submit event to the form and pass the function you hvae cretaed in the hanldeSubmit function

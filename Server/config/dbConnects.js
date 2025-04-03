@@ -3,7 +3,7 @@ import config from "./config.js";
 
 const dbConnect = async () => {
   try {
-    const connection = await mongoose.connect(config.db.MONGODB_URI);
+    const connection = await mongoose.connect(config.db.MONGODB_URL);
     console.log("MONGODB CONNECTED");
   } catch (error) {
     console.log(error);
