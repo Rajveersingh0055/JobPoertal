@@ -1,53 +1,62 @@
-import { complex } from "motion/react";
-import React from "react";
-import { useForm } from "react-hook-form";
-import { data } from "react-router-dom";
-
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import axios from 'axios'
 function Register() {
   const { register, handleSubmit, watch } = useForm();
 
-  console.log(register("name"));
+  console.log(register('name'));
 
-  const selectedRole = watch("role");
+const onSubmit = (data) => {
+console.log(data)
+const formData = new FormData ;
+formData.append('name' ,data.name)
+formData.append('email' , data.email)
+formData.append('password', data.password)
+formData.append('role' , data.role)
+formData.append('phoneNumber' , data.phoneNumber)
 
-  
+//if data.role === 'jobseeker'  , if (data.role==='recruiter')
+if(data.role === 'jobseeker'){
+  formData.append('jobseeker', JSON.stringify({
+    education : [{
+      insitution : data.insitution,
+      year : data.year ,
+      degree : data.degree
+   }] ,
+   experience : [{
+     company : data.company,
+     duration : data.duration ,
+     jobRole : data.jobRole
+   }] ,
+   skills : data.skills.split(',')
 
+  }))
+  formData.append('resume', data.resume[0])
+}
 
-  const onSubmit = (data) => {
-    console.log(data);
-    FormData.append(
-      "expeience",
-      JSON.stringify({
-        expeience: [
-          {
-            company: data.company,
-            jobRole: data.jobRole,
-            duration: data.duration,
-          },
-        ],
-      })
-    );
-    FormData.append(
-      "education",
-      JSON.stringify({
-        education: [
-          {
-            institution: data.institution,
-            year: data.year,
-            degree: data.degree,
-          },
-        ],
-      })
-    );
+if(data.role === 'recruiter'){
+  formData.append('recruiter', JSON.stringify({
+    companyName : data.companyName ,
+    companyWebsite : data.companyWebsite
+  }))
+}
+console.log(formData)
+ axios.post('http://localhost:3000/api/auth/register', formData , {
+  headers :{
+    "Content-Type" : "multipart/form-data"
   }
+ })
 
+}
+
+  const selectedRole = watch('role');
 
   return (
     <div className="min-h-screen text-white bg-black py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto bg-[#282828] rounded-xl shadow-lg overflow-hidden">
         <div className="bg-red-500 text-[#282828] py-6 px-8">
           <h1 className="text-2xl font-bold">
-            Create your <span className="font-extrabold">JobFinder</span>{" "}
+            Create your <span className="font-extrabold">JobFinder</span>{' '}
             profile
           </h1>
           <p className="mt-2 text-[#282828] text-opacity-90">
@@ -55,7 +64,7 @@ function Register() {
           </p>
         </div>
 
-        <form className="p-8 text-white space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="p-8 text-white space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-2">
@@ -63,9 +72,9 @@ function Register() {
               </label>
               <input
                 type="text"
+              {...register('name')}
                 className="w-full text-white bg-black border-gray-300 focus:border focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
                 placeholder="What is your name?"
-                {...register("name")}
               />
             </div>
 
@@ -75,9 +84,9 @@ function Register() {
               </label>
               <input
                 type="email"
+               {...register('email')}
                 className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
                 placeholder="Your Email"
-                {...register("email")}
               />
             </div>
 
@@ -87,9 +96,9 @@ function Register() {
               </label>
               <input
                 type="password"
+               {...register('password')}
                 className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
                 placeholder="Your Password"
-                {...register("password")}
               />
             </div>
 
@@ -99,9 +108,9 @@ function Register() {
               </label>
               <input
                 type="text"
+              {...register('phoneNumber')}
                 className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
                 placeholder="Your Phone Number"
-                {...register("phone")}
               />
             </div>
           </div>
@@ -114,7 +123,8 @@ function Register() {
               <label className="flex items-center cursor-pointer">
                 <input
                   type="radio"
-                  {...register("role")}
+                {...register(
+                  'role')}
                   value="jobseeker"
                   className="mr-2 text-red-500 focus:ring-red-500 h-4 w-4"
                 />
@@ -123,6 +133,7 @@ function Register() {
               <label className="flex items-center cursor-pointer">
                 <input
                   type="radio"
+                  {...register('role')}
                   value="recruiter"
                   className="mr-2 text-red-500 focus:ring-red-500 h-4 w-4"
                 />
@@ -131,7 +142,7 @@ function Register() {
             </div>
           </div>
 
-          {selectedRole === "jobseeker" && (
+          {selectedRole === 'jobseeker' && (
             <div className="border-t border-gray-200 pt-6">
               <h3 className="text-lg font-semibold text-gray-800 mb-4">
                 Job Seeker Details
@@ -143,9 +154,9 @@ function Register() {
                   </label>
                   <input
                     type="text"
+                   {...register('degree')}
                     className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
                     placeholder="Your Degree"
-                    {...register("degree")}
                   />
                 </div>
 
@@ -155,9 +166,9 @@ function Register() {
                   </label>
                   <input
                     type="text"
+                   {...register('institution')}
                     className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
                     placeholder="Your Institution"
-                    {...register("institution")}
                   />
                 </div>
 
@@ -167,9 +178,9 @@ function Register() {
                   </label>
                   <input
                     type="number"
+                   {...register('year')}
                     className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
                     placeholder="Year of Graduation"
-                    {...register("year")}
                   />
                 </div>
 
@@ -179,9 +190,9 @@ function Register() {
                   </label>
                   <input
                     type="text"
+                 {...register('company')}
                     className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
                     placeholder="Your Company"
-                    {...register("company")}
                   />
                 </div>
 
@@ -191,9 +202,9 @@ function Register() {
                   </label>
                   <input
                     type="number"
+                   {...register('duration')}
                     className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
                     placeholder="Duration"
-                    {...register("duration")}
                   />
                 </div>
 
@@ -203,9 +214,9 @@ function Register() {
                   </label>
                   <input
                     type="text"
+               {...register('jobRole')}
                     className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
                     placeholder="Job Role"
-                    {...register("jobRole")}
                   />
                 </div>
 
@@ -215,9 +226,9 @@ function Register() {
                   </label>
                   <input
                     type="text"
+                   {...register('skills')}
                     className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
                     placeholder="E.g., JavaScript, React"
-                    {...register("skills")}
                   />
                 </div>
 
@@ -235,6 +246,7 @@ function Register() {
                       <input
                         type="file"
                         j
+                       {...register('resume')}
                         className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
                       />
                     </label>
@@ -244,7 +256,7 @@ function Register() {
             </div>
           )}
 
-          {selectedRole === "recruiter" && (
+          {selectedRole === 'recruiter' && (
             <div className="border-t border-gray-200 pt-6">
               <h3 className="text-lg font-semibold text-gray-800 mb-4">
                 Recruiter Details
@@ -256,9 +268,9 @@ function Register() {
                   </label>
                   <input
                     type="text"
+                  {...register('companyName')}
                     className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
                     placeholder="Company Name"
-
                   />
                 </div>
 
@@ -268,9 +280,9 @@ function Register() {
                   </label>
                   <input
                     type="text"
+                    {...register('companyWebsite')}
                     className="w-full text-gray-700 bg-gray-50 focus:bg-white border border-gray-300 focus:border-red-500 rounded-lg px-4 py-2.5 focus:outline-none transition-colors"
                     placeholder="Company Website"
-
                   />
                 </div>
               </div>
@@ -279,14 +291,14 @@ function Register() {
 
           <div className="border-t border-gray-200 pt-6">
             <p className="text-xs text-gray-500">
-              By clicking Register, you agree to the{" "}
+              By clicking Register, you agree to the{' '}
               <span className="text-red-500 font-medium hover:underline cursor-pointer">
                 Terms and Conditions
-              </span>{" "}
-              &{" "}
+              </span>{' '}
+              &{' '}
               <span className="text-red-500 font-medium hover:underline cursor-pointer">
                 Privacy Policy
-              </span>{" "}
+              </span>{' '}
               of JobFinder.com
             </p>
             <button
